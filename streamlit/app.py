@@ -2,27 +2,31 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import psycopg2
+import os
+from dotenv import load_dotenv
 
 # Connect to PostgreSQL Database
 @st.cache_resource
 def get_connection():
     return psycopg2.connect(
-        host="localhost",
-        database="cdii",
-        user="postgres",
-        password="8300"
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
     )
+# Load environment variables from .env file
+load_dotenv()
 
 # Fetch Data from Database
 def run_query(query):
     try:
         # Establish a new connection each time
         conn = psycopg2.connect(
-            dbname="cdii",
-            user="postgres",
-            password="8300",
-            host="localhost",
-            port="5432"
+            dbname=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT")
         )
         with conn.cursor() as cur:
             cur.execute(query)
@@ -33,11 +37,10 @@ def run_query(query):
     except Exception as e:
         print(f"Error executing query: {e}")
         return []
-    
+
 # Streamlit App Layout
 st.title("U.S. Chronic Disease Indicators (CDI) Explorer")
 st.sidebar.header("Filter Options")
-
 
 # Sidebar Filters
 # Example for fetching distinct years
@@ -137,3 +140,4 @@ if st.sidebar.button("Run Query"):
         st.write(custom_data)
     except Exception as e:
         st.error(f"Error: {e}")
+# psql 'postgres://avnadmin:AVNS_S8AGhlXDKiq3xUSYLxx@pg-cdi-chronic-disease-indicators.b.aivencloud.com:15815/defaultdb?sslmode=require'
