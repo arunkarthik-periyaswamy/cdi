@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import psycopg2
-
 # Connect to PostgreSQL Database
 @st.cache_resource
 def get_connection():
